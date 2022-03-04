@@ -1,0 +1,85 @@
+/*
+    201700761
+*/
+
+package analizadores;
+import java_cup.runtime.Symbol;
+import java.util.List;
+import java.util.ArrayList; 
+import Estructuras.Errores;
+
+%% 
+%class Lexico
+%public 
+%line 
+%char 
+%cup 
+%unicode
+%ignorecase
+
+% {
+    public List<Errores> error = new ArrayList<>;
+    public int cont = 1;
+}
+
+%init{ 
+    yyline = 1; 
+    yychar = 1; 
+%init} 
+
+BLANCOS=[ \r\t]+
+COMENTARIO = ("//".*\r\n)|("//".*\n)|("//".*\r)
+COMMULTI ="<!"((.*)|\r\n|\n|\r)*"!>"
+LETRA = [a-zA-ZÑñ]
+DIGITO = [0-9]
+ID = {LETRA}({LETRA}|{DIGITO}|"_")* 
+CARACTER = ([^\t\n\r ])
+INTERVALO = {CARACTER}"~"{CARACTER}
+CADENA = [\"]([^\"\n])*[\"]
+LISTA = {CARACTER} (","{CARACTER})*
+
+%%
+
+<YYINITIAL>{
+    {BLANCOS} {} 
+    {COMENTARIO} {}
+    {COMMULTI} {}
+
+    "conj"  {return new Symbol(sym.CONJ,yyline,yychar, yytext());} 
+
+    ";"     {return new Symbol(sym.PTCOMA,yyline,yychar, yytext());} 
+    ":"    {return new Symbol(sym.DOSPUNTOS,yyline,yychar, yytext());} 
+    "-"    {return new Symbol(sym.MENOS,yyline,yychar, yytext());}
+    ">"    {return new Symbol(sym.MAYOR,yyline,yychar, yytext());}
+    "<"     {return new Symbol(sym.MENOR,yyline,yychar, yytext());}
+    "{"     {return new Symbol(sym.LLAVEABRE,yyline,yychar, yytext());} 
+    "}"     {return new Symbol(sym.LLAVECIERRE,yyline,yychar, yytext());} 
+    ","     {return new Symbol(sym.COMA,yyline,yychar,yytext());}
+
+    "."     {return new Symbol(sym.PUNTO,yyline,yychar, yytext());} 
+    "|"     {return new Symbol(sym.DISY,yyline,yychar, yytext());} 
+    "*"     {return new Symbol(sym.POR,yyline,yychar, yytext());} 
+    "+"     {return new Symbol(sym.MAS,yyline,yychar, yytext());} 
+    "?"     {return new Symbol(sym.PREG,yyline,yychar, yytext());} 
+    "~" {return new Symbol(sym.SEP,yyline,yychar, yytext());} 
+
+    "%%"     {return new Symbol(sym.DOBLEPORC,yyline,yychar, yytext());}
+
+    "\\n"   {return new Symbol(sym.SALTOL,yyline,yychar, yytext());} 
+    "\\\'"   {return new Symbol(sym.CSIMPLE,yyline,yychar, yytext());} 
+    \\\"   {return new Symbol(sym.CDOBLE,yyline,yychar, yytext());} 
+
+    {ID}      {return new Symbol(sym.ID,yyline,yychar, yytext());} 
+    {INTERVALO}     {return new Symbol(sym.INTERVALO,yyline,yychar, yytext());}
+    {CADENA}    {return new Symbol(sym.CADENA,yyline,yychar, yytext());}
+    {LISTA}     {return new Symbol(sym.LISTA,yyline,yychar, yytext());}  
+
+
+    \n {yychar=1;}
+
+    . { 
+        Errores nuevoError = new Errores(cont, "Léxico", "El caracter "+yytext()+ " no pertenece al lenguaje", yyline, yychar);
+        cont++;
+        error.add(nuevoError);
+      }
+}
