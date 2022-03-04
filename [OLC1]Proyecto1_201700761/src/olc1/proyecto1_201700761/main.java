@@ -95,7 +95,6 @@ public class main extends javax.swing.JFrame {
         IMG.setMaximumSize(new java.awt.Dimension(337, 337));
         IMG.setMinimumSize(new java.awt.Dimension(337, 337));
         IMG.setOpaque(true);
-        IMG.setPreferredSize(new java.awt.Dimension(0, 0));
 
         Editor.setColumns(20);
         Editor.setRows(5);
@@ -195,12 +194,13 @@ public class main extends javax.swing.JFrame {
                     .addComponent(comboExpresion, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnGenerarAutomatas)
                     .addComponent(btnAnalizarEntradas)
-                    .addComponent(btnAnterior)
-                    .addComponent(btnAbrir)
-                    .addComponent(btnSiguiente))
+                    .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                        .addComponent(btnAnterior)
+                        .addComponent(btnAbrir)
+                        .addComponent(btnSiguiente)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
@@ -316,6 +316,27 @@ public class main extends javax.swing.JFrame {
 
     private void jMenuItem4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem4ActionPerformed
         // Guardar Como
+        try {
+            file.setFileFilter(filtro);
+            int option = file.showSaveDialog(this);
+            if (option == JFileChooser.APPROVE_OPTION) {
+                name = file.getSelectedFile().getName();
+                path = file.getSelectedFile().toString();
+                if (!name.endsWith("exp")) {
+                    archivo = new File(file.getSelectedFile().getAbsolutePath()+".exp");
+                } else {
+                    archivo = new File(file.getSelectedFile().getAbsolutePath());
+                }
+                txtNombreArchivo.setText("Nombre del Archivo: "+name);
+                jMenuItem3ActionPerformed(evt);
+            }
+        } catch (Exception e) {
+            
+        }
+    }//GEN-LAST:event_jMenuItem4ActionPerformed
+
+    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
+        // Nuevo Archivo
         if (contenido.equals(Editor.getText())) {
             name = "";
             path = "";
@@ -338,13 +359,10 @@ public class main extends javax.swing.JFrame {
                 IMG.setIcon(null);
                 txtNombreArchivo.setText("Nombre del Archivo: Nuevo archivo.exp");
                 btnJSON.setEnabled(false);
+            } else if (op == 0) {
+                jMenuItem3ActionPerformed(evt);
             }
         }
-    }//GEN-LAST:event_jMenuItem4ActionPerformed
-
-    private void jMenuItem1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem1ActionPerformed
-        // Nuevo Archivo
-        
     }//GEN-LAST:event_jMenuItem1ActionPerformed
 
     /**
