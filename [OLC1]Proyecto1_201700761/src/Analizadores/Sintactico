@@ -1,4 +1,4 @@
-package analizadores;
+package Analizadores;
 import java_cup.runtime.*;
 import java.util.HashMap;
 import java.util.List;
@@ -7,3 +7,188 @@ import java.util.ArrayList;
 import Estructuras.Hoja;
 import Estructuras.Errores;
 import Estructuras.AFD;
+
+parser code 
+{:
+
+    public Map<String, String> CONJ = new HashMap<>();
+    public Map<String, String> CONJ_EXP = new HashMap<>();
+    public List<String[]> Validacion = new ArrayList<>();
+    public List<Errores> Errors = new ArrayList<>();
+    public int cont = 1;
+    public String descripcion = "";
+    public Map<String, AFD> List_AFD = new HashMap<>();
+
+    public void syntax_error(Symbol s){
+        Errores err = null;
+        if (descripcion.isEmpty()) {
+            err = new Errores(cont, "Sintactico", "No se esperaba este componente: " + s.value, s.left, s.right);
+            cont++;
+        } else {
+            err = new Errores(cont, "Sintactico", descripcion + s.value, s.left, s.right);
+            cont++;
+        }
+        descripcion = "";
+        Errors.add(err);
+        CONJ_EXP.clear();
+    }
+
+    public void unrecovered_syntax_error(Symbol s) throws java.lang.Exception{
+        Errores err = null;
+        if (descripcion.isEmpty()){
+            err = new Errores(cont, "Sintactico", "Error irrecuperable, componente no reconocido: " + s.value, s.left, s.right);
+            cont++;
+        } else {
+            err = new Errores(cont, "Sintactico", "Error: " + s.value, s.left, s.right);
+            cont++;
+        }
+        descripcion = "";
+        Errors.add(err);
+        CONJ_EXP.clear();
+    }
+
+    public Map<String, AFD> getAFD() {
+        return List_AFD;
+    }
+:} 
+
+terminal String CONJ;
+terminal String PTCOMA,MENOS,MAYOR,MENOR,COMA,LLAVEABRE,LLAVECIERRE,DOBLEPORC,DOSPUNTOS;
+terminal String PUNTO,DISY,POR,MAS,PREG,SEP;
+terminal String ESPACIO;
+terminal String SIGNO;
+terminal String DIGITO;
+terminal String LETRA;
+terminal String PARRAF;
+terminal String ESPECIAL;
+
+non terminal ini;
+non terminal INICIO;
+non terminal String Operaciones;
+non terminal String Operacion;
+non terminal String ALFABETO;
+non terminal String NOMBRE;
+non terminal String NOMBRE2;
+non terminal Hoja EXPRESION;
+non terminal Hoja EXPRESIONM;
+non terminal String ENTRADA;
+non terminal String CARACTER;
+non terminal String CARACTERNOTA;
+non terminal String NOTACION;
+non terminal String NOTACION2;
+
+precedence left MAS, POR, PUNTO, PREG, DISY;
+
+start with ini;
+
+ini::= INICIO;
+
+INICIO::=
+    LLAVEABRE Operaciones DOBLEPORC DOBLEPORC ENTRADA LLAVECIERRE
+ |  LLAVEABRE Operaciones DOBLEPORC DOBLEPORC LLAVECIERRE
+ |  LLAVEABRE DOBLEPORC DOBLEPORC ENTRADA LLAVECIERRE
+ |  LLAVEABRE Operaciones LLAVECIERRE
+ |  error DOBLEPORC DOBLEPORC                               {:descripcion = "Error en operaciones, no se esperaba el componente: ";:}
+;
+
+Operaciones::=
+    Operacion Operaciones
+ |  Operacion
+;
+
+Operacion::=
+    CONJ DOSPUNTOS NOMBRE:a MENOS MAYOR NOTACION:b PTCOMA                   {:
+                                                                                if (CONJ.get(a) == null){
+                                                                                    CONJ.put(a,b);
+                                                                                }else{System.out.println("CONJ repetido");}
+                                                                                System.out.println("Conjunto: " +a+ " con notacion: " +b+ " fue creado con exito");
+                                                                            :}
+ |  NOMBRE:a MENOS MAYOR EXPRESION:b PTCOMA                                 {:if(a != null){List_AFD.put(a,new AFD(new Hoja(".", b , new Hoja("#", null, null, "hoja"), "."), a, CONJ_EXP)); CONJ_EXP.clear(); System.out.println("Expresion: "+a+" con la notación: "+b+" fue creada con exito");}:}
+ |  error PTCOMA                                                            {:descripcion = "Error en operación no se esperaba el componente: ";:}
+;
+
+EXPRESION::=
+    POR ALFABETO:a                                  {:RESULT = new Hoja("*",new Hoja(a, null, null, "hoja"),null,"*");System.out.println("simbolo * izquierda:"+a);:}
+ |  POR EXPRESIONM:a                                {:RESULT = new Hoja("*", a ,null,"*");System.out.println("simbolo * izquierda:"+a);:}
+ |  PUNTO ALFABETO:a EXPRESION:b                    {:RESULT = new Hoja(".",new Hoja(a, null, null, "hoja"),b,".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  PUNTO EXPRESION:a ALFABETO:b                    {:RESULT = new Hoja(".",a,new Hoja(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  PUNTO ALFABETO:a ALFABETO:b                     {:RESULT = new Hoja(".",new Hoja(a, null, null, "hoja"),new Hoja(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  PUNTO EXPRESION:a EXPRESION:b                   {:RESULT = new Hoja(".", a, b,".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  DISY ALFABETO:a ALFABETO:b                      {:RESULT = new Hoja("|",new Hoja(a, null, null, "hoja"),new Hoja(b, null, null, "hoja"),"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  DISY ALFABETO:a EXPRESION:b                     {:RESULT = new Hoja("|",new Hoja(a, null, null, "hoja"),b,"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  DISY EXPRESION:a ALFABETO:b                     {:RESULT = new Hoja("|",a , new Hoja(b, null, null, "hoja"),"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  DISY EXPRESION:a EXPRESION:b                    {:RESULT = new Hoja("|",a , b,"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  MAS ALFABETO:a                                  {:RESULT = new Hoja("+",new Hoja(a, null, null, "hoja"),null,"+");System.out.println("simbolo + izquierda:"+a);:}
+ |  MAS EXPRESIONM:a                                {:RESULT = new Hoja("+",a,null,"+");System.out.println("simbolo + izquierda:"+a);:}
+ |  PREG ALFABETO:a                                 {:RESULT = new Hoja("?",new Hoja(a, null, null, "hoja"),null,"?");System.out.println("simbolo ? izquierda:"+a);:}
+ |  PREG EXPRESIONM:a                               {:RESULT = new Hoja("?",a,null,"?");System.out.println("simbolo ? izquierda:"+a);:}
+;
+
+EXPRESIONM::=
+    PUNTO ALFABETO:a EXPRESION:b                    {:RESULT = new Hoja(".",new Hoja(a, null, null, "hoja"), b,".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  PUNTO EXPRESION:a ALFABETO:b                    {:RESULT = new Hoja(".", a, new Hoja(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  PUNTO ALFABETO:a ALFABETO:b                     {:RESULT = new Hoja(".",new Hoja(a, null, null, "hoja"), new Hoja(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  PUNTO EXPRESION:a EXPRESION:b                   {:RESULT = new Hoja(".", a, b,".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
+ |  DISY ALFABETO:a ALFABETO:b                      {:RESULT = new Hoja("|",new Hoja(a, null, null, "hoja"), new Hoja(b, null, null, "hoja"),"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  DISY ALFABETO:a EXPRESION:b                     {:RESULT = new Hoja("|",new Hoja(a, null, null, "hoja"), b,"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  DISY EXPRESION:a ALFABETO:b                     {:RESULT = new Hoja("|", a, new Hoja(b, null, null, "hoja"),"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  DISY EXPRESION:a EXPRESION:b                    {:RESULT = new Hoja("|", a, b,"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+;
+
+ENTRADA::=
+    NOMBRE:a DOSPUNTOS  PARRAF:b  PTCOMA {:if(List_AFD.get(a)!=null){String[] data = {a,b.substring(1, b.length()-1)}; Validacion.add(data);}:}
+ |  ENTRADA NOMBRE:a DOSPUNTOS  PARRAF:b  PTCOMA {:if(List_AFD.get(a)!=null){String[] data = {a,b.substring(1, b.length()-1)}; Validacion.add(data);}:}
+ |  error PTCOMA                                {:descripcion = "Error en Evaluación no se esperaba el componente: ";:}
+;
+
+ALFABETO::=
+
+    ESPECIAL:a                          {:RESULT = a; System.out.println("Alfabeto: "+a);:}
+ |  PARRAF:a                            {:RESULT = a.substring(1, a.length()-1); System.out.println("Alfabeto: "+a);:}
+ |  ESPACIO:a                           {:RESULT = a.substring(1, a.length()-1); System.out.println("Alfabeto: "+a);:}
+ |  LLAVEABRE NOMBRE:a LLAVECIERRE      {:RESULT = a; if(CONJ_EXP.get(a)==null){ if(CONJ.get(a)!=null){CONJ_EXP.put(a,CONJ.get(a));}else{System.out.println("no existe el conjunto");}}else{System.out.println("CONJ_EXP repetido");} System.out.println("Alfabeto: "+a);:}
+;
+
+CARACTER::=
+    LETRA:a                     {:RESULT = a;:}
+ |  SIGNO:a                     {:RESULT = a;:}
+ |  DIGITO:a                    {:RESULT = a;:}
+;
+
+CARACTERNOTA::=
+    LETRA:a                     {:RESULT = a;:}
+|   SIGNO:a                     {:RESULT = a;:}
+|   DIGITO:a                    {:RESULT = a;:}
+|   POR:a                       {:RESULT = a;:}
+|   MAS:a                       {:RESULT = a;:}
+|   DISY:a                      {:RESULT = a;:}
+|   PUNTO:a                     {:RESULT = a;:}
+|   PTCOMA:a                    {:RESULT = a;:}
+|   LLAVEABRE:a                 {:RESULT = a;:}
+|   LLAVECIERRE:a               {:RESULT = a;:}
+|   MENOR:a                     {:RESULT = a;:}
+|   MAYOR:a                     {:RESULT = a;:}
+|   PREG:a                      {:RESULT = a;:}
+|   MENOS:a                     {:RESULT = a;:}
+|   COMA:a                      {:RESULT = a;:}
+;
+
+NOMBRE::=
+    LETRA:a                  {:RESULT = a;:}
+ |  LETRA:a NOMBRE2:b        {:RESULT = a+b;:}
+;
+
+NOMBRE2::=
+    CARACTER:a              {:RESULT = a;:}
+ |  CARACTER:a NOMBRE2:b    {:RESULT = a+b;:}
+;
+
+NOTACION::=
+    CARACTERNOTA:a SEP CARACTERNOTA:b   {:RESULT =a+"~"+b; System.out.println("NOTACION: "+a+"~"+b);:}
+ |  NOTACION2:a                         {:RESULT =a; System.out.println("NOTACION: "+a);:}
+;
+
+NOTACION2::=
+    CARACTERNOTA:a                         {:RESULT = a;:}
+ |  CARACTERNOTA:a COMA NOTACION2:b        {:RESULT = a+","+b;:}
+;
