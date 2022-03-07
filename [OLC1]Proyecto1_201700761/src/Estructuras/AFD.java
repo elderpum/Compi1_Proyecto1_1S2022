@@ -20,6 +20,7 @@ import java.util.Map;
  */
 public class AFD {
     Hoja cabeza;
+    AFN afn;
     int identificador = 1;
     int g = 0;
     Map<String, String> CONJ = new HashMap<>();
@@ -39,10 +40,19 @@ public class AFD {
         this.CONJ.putAll(conjunto);
         generarDatos();
         CrearTransiciones();
+        CrearAFN();
+    }
+    
+    public void GraficarTodo(){
+        GraficaArbol();
+        GraficarSiguientes();
+        GraficarAFD();
+        GraficarTransiciones();
+        this.afn.generarArbol();
     }
     
     public void generarDatos(){
-        
+        this.cabeza = _generarDatos(this.cabeza);
     }
     
     public Hoja _generarDatos(Hoja nodo){
@@ -477,5 +487,48 @@ public class AFD {
             System.out.println("Cadena: " + cadena + " no es valida con la expresion: " + this.nombre);
         }
         return respuesta;
+    }
+    
+    public void CrearAFN(){
+        this.afn = new AFN(_CrearAFN(cabeza.izquierda), nombre);
+        afn.CrearAFN();
+    }
+    
+    public Hoja_AFN _CrearAFN(Hoja nodo){
+        if (!nodo.tipo.equals("hoja")) {
+            String az = "";
+            String ad = "";
+            String alfa[] = null;
+            Hoja_AFN izquierda = null;
+            Hoja_AFN derecha = null;
+            if (nodo.izquierda != null) {
+                if (!nodo.izquierda.tipo.equals("hoja")) {
+                    izquierda = _CrearAFN(nodo.izquierda);
+                } else {
+                    az = nodo.izquierda.dato;
+                }
+            }
+            if (nodo.derecha != null) {
+                if (!nodo.derecha.tipo.equals("hoja")) {
+                    derecha = _CrearAFN(nodo.derecha);
+                } else {
+                    ad = nodo.derecha.dato;
+                }
+            }
+            if (!az.isEmpty() && !ad.isEmpty()) {
+                alfa = new String[2];
+                alfa[0] = az;
+                alfa[1] = ad;
+            } else if (!az.isEmpty()) {
+                alfa = new String[1];
+                alfa[0] = az;
+            } else if (!ad.isEmpty()) {
+                alfa = new String[1];
+                alfa[0] = ad;
+            }
+            Hoja_AFN nueva = new Hoja_AFN(nodo.dato, alfa, izquierda, derecha, nodo.tipo);
+            return nueva;
+        }
+        return new Hoja_AFN(nodo.dato, null, null, null, nodo.tipo);
     }
 }

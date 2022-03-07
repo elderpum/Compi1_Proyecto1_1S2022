@@ -13,9 +13,11 @@ import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringReader;
 import java.nio.file.Files;
@@ -47,6 +49,7 @@ public class main extends javax.swing.JFrame {
     static Map<String, AFD> arboles = new HashMap<>();
     static List<Errores> errors = new ArrayList<>();
     static int actual = 0;
+    static String rutaTotal;
 
     public main() {
         initComponents();
@@ -356,8 +359,8 @@ public class main extends javax.swing.JFrame {
                 case "AFD":
                     direccion = "./AFD_201700761" + name + ".jpg";
                     break;
-                case "AFN":
-                    direccion = "./AFN_201700761" + name + ".jpg";
+                case "AFND":
+                    direccion = "./AFND_201700761" + name + ".jpg";
                     break;
             }
             try {
@@ -379,19 +382,35 @@ public class main extends javax.swing.JFrame {
     
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // Abrir archivo .exp
-        try {
-            file.setFileFilter(filtro);
-            int option = file.showOpenDialog(this);
-            if (option == JFileChooser.APPROVE_OPTION) {
-                name = file.getSelectedFile().getName();
-                path = file.getSelectedFile().toString();
-                archivo = new File(file.getSelectedFile().getAbsolutePath());
-                contenido = new String(Files.readAllBytes(archivo.toPath()));
-                Editor.setText(contenido);
-                txtNombreArchivo.setText("Nombre del Archivo: " + name);
-            } 
-        } catch (Exception e){
-            
+        JFileChooser pantallaCarga = new JFileChooser();
+        pantallaCarga.setFileFilter(new FileNameExtensionFilter("Todos los archivos *.exp", "exp", "EXP"));
+        int abrirRuta = pantallaCarga.showDialog(null, "Abrir:");
+        if (abrirRuta == JFileChooser.APPROVE_OPTION) {
+            FileReader file = null;
+            BufferedReader buff = null;
+            try {
+                File archivo = pantallaCarga.getSelectedFile();
+                String RutaM = pantallaCarga.getSelectedFile().getAbsolutePath();
+                if (RutaM.endsWith(".EXP") || RutaM.endsWith(".Exp") || RutaM.endsWith(".exp")) {
+                    file = new FileReader(archivo);
+                    buff = new BufferedReader(file);
+                    String linea;
+                    String contenido = "";
+                    path = RutaM;
+                    Editor.setText(null);
+                    while ((linea = buff.readLine()) != null) {
+                        contenido += linea + "\n";
+                    }
+                    Editor.setText(contenido);
+                    txtNombreArchivo.setText("Nombre del Archivo: " + name);
+                } else{
+                    JOptionPane.showMessageDialog(this, "El archivo tuvo un error, no se pudo abrir", "Fatal Error", JOptionPane.ERROR_MESSAGE);    
+                }
+            } catch (FileNotFoundException ex) {
+                java.util.logging.Logger.getLogger(main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            } catch (IOException ex) {
+                java.util.logging.Logger.getLogger(main.class.getName()).log(java.util.logging.Level.SEVERE, null, ex);
+            }
         }
     }//GEN-LAST:event_jMenuItem2ActionPerformed
 
@@ -437,6 +456,7 @@ public class main extends javax.swing.JFrame {
         if (contenido.equals(Editor.getText())) {
             name = "";
             path = "";
+            rutaTotal = "";
             archivo = null;
             Editor.setText("");
             contenido = "";
@@ -449,6 +469,7 @@ public class main extends javax.swing.JFrame {
             if (op == 1) {
                 name = "";
                 path = "";
+                rutaTotal = "";
                 Editor.setText("");
                 contenido = "";
                 comboExpresion.removeAllItems();
@@ -464,18 +485,20 @@ public class main extends javax.swing.JFrame {
 
     private void btnGenerarAutomatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAutomatasActionPerformed
         // Botón Generar Automatas
-        Analizadores.Sintactico parser;
-        List<Errores> erroresLexicos = new ArrayList<>();
+        Analizadores.Sintactico pars;
         comboExpresion.removeAllItems();
         try{
             errors.clear();
-            parser = new Analizadores.Sintactico(new Analizadores.Lexico(new BufferedReader(new FileReader(path))));
-            parser.parse();
-            arboles = parser.List_AFD;
-            errors.addAll(parser.Errors);
+            Lexico lexical = new Analizadores.Lexico(new BufferedReader(new FileReader(path)));
+            pars = new Analizadores.Sintactico(lexical);
+            pars.cont = lexical.cont;
+            pars.parse();
+            arboles = pars.List_AFD;
+            errors.addAll(lexical.errors);
+            errors.addAll(pars.Errors);
             txtTotalErrores.setText("Total de Errores: " + errors.size());
             for (AFD arbol: arboles.values()) {
-                arbol.GraficaArbol();
+                arbol.GraficarTodo();
                 comboExpresion.addItem(arbol.nombre);
             }
             comboExpresion.setSelectedIndex(0);
@@ -484,6 +507,7 @@ public class main extends javax.swing.JFrame {
             } catch (Exception e) {
                 System.out.println("Thread Interrupted");
             }
+            SeleccionarIMG((String)comboExpresion.getSelectedItem(), (String)comboTipo.getSelectedItem());
         } catch (Exception ex) {
             System.out.println("Error fatal en compilacion de entrada.");
             System.out.println("Causa: " + ex.getCause());
@@ -492,7 +516,7 @@ public class main extends javax.swing.JFrame {
 
     private void btnAnalizarEntradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarEntradasActionPerformed
         //Botón Analizar Entradas:
-        Analizadores.Sintactico parser;
+        Analizadores.Sintactico pars;
         try{
             File directorio = new File("./SALIDAS_201700761");
             if (!directorio.exists()) {
@@ -500,14 +524,14 @@ public class main extends javax.swing.JFrame {
             }
             errors.clear();
             Lexico lexical = new Analizadores.Lexico(new StringReader(Editor.getText()));
-            parser = new Analizadores.Sintactico(lexical);
-            parser.cont = lexical.cont;
-            parser.parse();
-            arboles = parser.List_AFD;
+            pars = new Analizadores.Sintactico(lexical);
+            pars.cont = lexical.cont;
+            pars.parse();
+            arboles = pars.List_AFD;
             errors.addAll(lexical.errors);
-            errors.addAll(parser.Errors);
+            errors.addAll(pars.Errors);
             txtTotalErrores.setText("Total de Errores: " + errors.size());
-            List<String[]> comprobaciones = parser.Validacion;
+            List<String[]> comprobaciones = pars.Validacion;
             FileWriter fichero;
             PrintWriter escritor;
             Gson g = new Gson();

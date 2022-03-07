@@ -37,42 +37,40 @@ ESPECIAL = (\\n|\\\'|\\\")
 
 %%
 
-<YYINITIAL>{
-    {BLANCOS} {} 
-    {COMENTARIO} {}
+{BLANCOS} {} 
+{COMENTARIO} {}
 
-    "CONJ"  {return new Symbol(sym.CONJ,yyline,yychar, yytext());} 
+"CONJ"  {return new Symbol(sym.CONJ,yyline,yychar, yytext());} 
 
-    ";"     {return new Symbol(sym.PTCOMA,yyline,yychar, yytext());} 
-    ":"    {return new Symbol(sym.DOSPUNTOS,yyline,yychar, yytext());} 
-    "-"    {return new Symbol(sym.MENOS,yyline,yychar, yytext());}
-    ">"    {return new Symbol(sym.MAYOR,yyline,yychar, yytext());}
-    "<"     {return new Symbol(sym.MENOR,yyline,yychar, yytext());}
-    "{"     {return new Symbol(sym.LLAVEABRE,yyline,yychar, yytext());} 
-    "}"     {return new Symbol(sym.LLAVECIERRE,yyline,yychar, yytext());} 
-    ","     {return new Symbol(sym.COMA,yyline,yychar,yytext());}
+";"     {return new Symbol(sym.PTCOMA,yyline,yychar, yytext());} 
+":"    {return new Symbol(sym.DOSPUNTOS,yyline,yychar, yytext());} 
+"-"    {return new Symbol(sym.MENOS,yyline,yychar, yytext());}
+">"    {return new Symbol(sym.MAYOR,yyline,yychar, yytext());}
+"<"     {return new Symbol(sym.MENOR,yyline,yychar, yytext());}
+"{"     {return new Symbol(sym.LLAVEABRE,yyline,yychar, yytext());} 
+"}"     {return new Symbol(sym.LLAVECIERRE,yyline,yychar, yytext());} 
+","     {return new Symbol(sym.COMA,yyline,yychar,yytext());}
 
-    "."     {return new Symbol(sym.PUNTO,yyline,yychar, yytext());} 
-    "|"     {return new Symbol(sym.DISY,yyline,yychar, yytext());} 
-    "*"     {return new Symbol(sym.POR,yyline,yychar, yytext());} 
-    "+"     {return new Symbol(sym.MAS,yyline,yychar, yytext());} 
-    "?"     {return new Symbol(sym.PREG,yyline,yychar, yytext());} 
-    "~"     {return new Symbol(sym.SEP,yyline,yychar, yytext());} 
+"."     {return new Symbol(sym.PUNTO,yyline,yychar, yytext());} 
+"|"     {return new Symbol(sym.DISY,yyline,yychar, yytext());} 
+"*"     {return new Symbol(sym.POR,yyline,yychar, yytext());} 
+"+"     {return new Symbol(sym.MAS,yyline,yychar, yytext());} 
+"?"     {return new Symbol(sym.PREG,yyline,yychar, yytext());} 
+"~"     {return new Symbol(sym.SEP,yyline,yychar, yytext());} 
 
-    "%%"     {return new Symbol(sym.DOBLEPORC,yyline,yychar, yytext());}
+"%%"     {return new Symbol(sym.DOBLEPORC,yyline,yychar, yytext());}
  
-    {PARRAF}    {return new Symbol(sym.PARRAF,yyline,yychar, yytext());}
-    {ESPECIAL}  {return new Symbol(sym.ESPECIAL,yyline,yychar, yytext());}
-    {D}         {return new Symbol(sym.DIGITO,yyline,yychar, yytext());}
-    {S}         {return new Symbol(sym.SIGNO,yyline,yychar, yytext());}
-    {L}         {return new Symbol(sym.LETRA,yyline,yychar, yytext());}
+{PARRAF}    {return new Symbol(sym.PARRAF,yyline,yychar, yytext());}
+{ESPECIAL}  {return new Symbol(sym.ESPECIAL,yyline,yychar, yytext());}
+{D}         {return new Symbol(sym.DIGITO,yyline,yychar, yytext());}
+{S}         {return new Symbol(sym.SIGNO,yyline,yychar, yytext());}
+{L}         {return new Symbol(sym.LETRA,yyline,yychar, yytext());}
 
 
-    \n {yychar=1;}
+\n {yychar=1;}
 
-    . { 
-        Errores nuevoError = new Errores(cont, "Léxico", "El caracter "+yytext()+ " no pertenece al lenguaje", yyline, yychar);
-        cont++;
-        errors.add(nuevoError);
-      }
+. { 
+    Errores nuevoError = new Errores(cont, "Léxico", "El caracter "+yytext()+ " no pertenece al lenguaje", yyline, yychar);
+    cont++;
+    errors.add(nuevoError);
 }

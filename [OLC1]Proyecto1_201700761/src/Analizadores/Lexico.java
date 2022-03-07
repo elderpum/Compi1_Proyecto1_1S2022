@@ -266,7 +266,7 @@ public class Lexico implements java_cup.runtime.Scanner {
    * @param   in  the java.io.Reader to read input from.
    */
   public Lexico(java.io.Reader in) {
-    yyline = 1; 
+      yyline = 1; 
     yychar = 1; 
     this.zzReader = in;
   }
@@ -645,8 +645,8 @@ public class Lexico implements java_cup.runtime.Scanner {
         switch (zzAction < 0 ? zzAction : ZZ_ACTION[zzAction]) {
           case 1: 
             { Errores nuevoError = new Errores(cont, "Léxico", "El caracter "+yytext()+ " no pertenece al lenguaje", yyline, yychar);
-        cont++;
-        errors.add(nuevoError);
+    cont++;
+    errors.add(nuevoError);
             } 
             // fall through
           case 25: break;
