@@ -41,7 +41,7 @@ ESPECIAL = (\\n|\\\'|\\\")
     {BLANCOS} {} 
     {COMENTARIO} {}
 
-    "conj"  {return new Symbol(sym.CONJ,yyline,yychar, yytext());} 
+    "CONJ"  {return new Symbol(sym.CONJ,yyline,yychar, yytext());} 
 
     ";"     {return new Symbol(sym.PTCOMA,yyline,yychar, yytext());} 
     ":"    {return new Symbol(sym.DOSPUNTOS,yyline,yychar, yytext());} 

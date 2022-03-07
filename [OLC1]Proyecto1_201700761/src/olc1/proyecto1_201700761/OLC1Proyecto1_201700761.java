@@ -7,7 +7,9 @@ package olc1.proyecto1_201700761;
 
 import Analizadores.Lexico;
 import Estructuras.AFD;
+import java.io.BufferedReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.util.Map;
 
 /**
@@ -29,8 +31,7 @@ public class OLC1Proyecto1_201700761 {
     public static void interpretar(String path){
         Analizadores.Sintactico parser;
         try{
-            Lexico lexical = new Analizadores.Lexico(new FileInputStream(path));
-            parser = new Analizadores.Sintactico(lexical);
+            parser = new Analizadores.Sintactico(new Analizadores.Lexico(new BufferedReader(new FileReader(path))));
             parser.parse();
             Map<String, AFD> arbol = parser.List_AFD;
             System.out.println(arbol);

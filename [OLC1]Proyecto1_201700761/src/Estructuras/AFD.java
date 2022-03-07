@@ -37,6 +37,8 @@ public class AFD {
         this.cabeza = cabeza;
         this.nombre = nombre;
         this.CONJ.putAll(conjunto);
+        generarDatos();
+        CrearTransiciones();
     }
     
     public void generarDatos(){

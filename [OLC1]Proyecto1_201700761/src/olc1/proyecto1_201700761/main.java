@@ -10,9 +10,11 @@ import Estructuras.Errores;
 import Estructuras.Validation;
 import Analizadores.Lexico;
 import com.google.gson.Gson;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.io.StringReader;
@@ -463,15 +465,13 @@ public class main extends javax.swing.JFrame {
     private void btnGenerarAutomatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAutomatasActionPerformed
         // Botón Generar Automatas
         Analizadores.Sintactico parser;
+        List<Errores> erroresLexicos = new ArrayList<>();
         comboExpresion.removeAllItems();
         try{
             errors.clear();
-            Lexico lexical = new Analizadores.Lexico(new StringReader(Editor.getText()));
-            parser = new Analizadores.Sintactico(lexical);
-            parser.cont = lexical.cont;
+            parser = new Analizadores.Sintactico(new Analizadores.Lexico(new BufferedReader(new FileReader(path))));
             parser.parse();
             arboles = parser.List_AFD;
-            errors.addAll(lexical.errors);
             errors.addAll(parser.Errors);
             txtTotalErrores.setText("Total de Errores: " + errors.size());
             for (AFD arbol: arboles.values()) {
