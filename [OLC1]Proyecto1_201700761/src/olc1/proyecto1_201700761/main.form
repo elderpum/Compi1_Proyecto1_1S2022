@@ -321,6 +321,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Generar Aut&#xf3;matas"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnGenerarAutomatasActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnAnalizarEntradas">
           <Properties>
@@ -329,6 +332,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Analizar Entradas"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAnalizarEntradasActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnAnterior">
           <Properties>
@@ -337,6 +343,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Anterior"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAnteriorActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnAbrir">
           <Properties>
@@ -345,6 +354,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Abrir"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnAbrirActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnSiguiente">
           <Properties>
@@ -353,6 +365,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Siguiente"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnSiguienteActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnJSON">
           <Properties>
@@ -360,7 +375,11 @@
               <Font name="Comic Sans MS" size="11" style="3"/>
             </Property>
             <Property name="text" type="java.lang.String" value="Abrir JSON"/>
+            <Property name="enabled" type="boolean" value="false"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnJSONActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnLimpiarConsola">
           <Properties>
@@ -369,6 +388,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Limpiar Consola"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnLimpiarConsolaActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JButton" name="btnErrores">
           <Properties>
@@ -377,6 +399,9 @@
             </Property>
             <Property name="text" type="java.lang.String" value="Ver Errores"/>
           </Properties>
+          <Events>
+            <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="btnErroresActionPerformed"/>
+          </Events>
         </Component>
         <Component class="javax.swing.JLabel" name="txtNombreArchivo">
           <Properties>

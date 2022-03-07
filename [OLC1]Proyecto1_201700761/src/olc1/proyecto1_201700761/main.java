@@ -5,10 +5,24 @@
  */
 package olc1.proyecto1_201700761;
 
+import Estructuras.AFD;
+import Estructuras.Errores;
+import Estructuras.Validation;
+import Analizadores.Lexico;
+import com.google.gson.Gson;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
+import java.io.PrintWriter;
+import java.io.StringReader;
 import java.nio.file.Files;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import javax.swing.Icon;
+import javax.swing.ImageIcon;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -27,6 +41,10 @@ public class main extends javax.swing.JFrame {
     static String name = "";
     static String path = "";
     static String contenido = "";
+    static String direccion = "";
+    static Map<String, AFD> arboles = new HashMap<>();
+    static List<Errores> errors = new ArrayList<>();
+    static int actual = 0;
 
     public main() {
         initComponents();
@@ -102,27 +120,68 @@ public class main extends javax.swing.JFrame {
 
         btnGenerarAutomatas.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnGenerarAutomatas.setText("Generar Autómatas");
+        btnGenerarAutomatas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnGenerarAutomatasActionPerformed(evt);
+            }
+        });
 
         btnAnalizarEntradas.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnAnalizarEntradas.setText("Analizar Entradas");
+        btnAnalizarEntradas.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnalizarEntradasActionPerformed(evt);
+            }
+        });
 
         btnAnterior.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnAnterior.setText("Anterior");
+        btnAnterior.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAnteriorActionPerformed(evt);
+            }
+        });
 
         btnAbrir.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnAbrir.setText("Abrir");
+        btnAbrir.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnAbrirActionPerformed(evt);
+            }
+        });
 
         btnSiguiente.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnSiguiente.setText("Siguiente");
+        btnSiguiente.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnSiguienteActionPerformed(evt);
+            }
+        });
 
         btnJSON.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnJSON.setText("Abrir JSON");
+        btnJSON.setEnabled(false);
+        btnJSON.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnJSONActionPerformed(evt);
+            }
+        });
 
         btnLimpiarConsola.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnLimpiarConsola.setText("Limpiar Consola");
+        btnLimpiarConsola.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnLimpiarConsolaActionPerformed(evt);
+            }
+        });
 
         btnErrores.setFont(new java.awt.Font("Comic Sans MS", 3, 11)); // NOI18N
         btnErrores.setText("Ver Errores");
+        btnErrores.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnErroresActionPerformed(evt);
+            }
+        });
 
         txtNombreArchivo.setFont(new java.awt.Font("Comic Sans MS", 3, 18)); // NOI18N
         txtNombreArchivo.setText("Nombre del Archivo: ");
@@ -280,6 +339,42 @@ public class main extends javax.swing.JFrame {
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
+    public void SeleccionarIMG(String name, String tipo){
+        if (!tipo.isEmpty() && !name.isEmpty()) {
+            switch(tipo){
+                case "Árbol":
+                    direccion = "./ARBOLES_201700761" + name + ".jpg";
+                    break;
+                case "Siguientes":
+                    direccion = "./SIGUIENTES_201700761" + name + "jpg";
+                    break;
+                case "Transiciones":
+                    direccion = "./TRANSICIONES_201700761" + name + ".jpg";
+                    break;
+                case "AFD":
+                    direccion = "./AFD_201700761" + name + ".jpg";
+                    break;
+                case "AFN":
+                    direccion = "./AFN_201700761" + name + ".jpg";
+                    break;
+            }
+            try {
+                ImageIcon imagen1 = new ImageIcon(direccion);
+                float relacionW = 1;
+                float relacionH = 1;
+                if (imagen1.getIconHeight() < imagen1.getIconWidth()) {
+                    relacionH = ((float) imagen1.getIconHeight() / imagen1.getIconWidth());
+                } else {
+                    relacionW = ((float) imagen1.getIconWidth() / imagen1.getIconHeight());
+                }
+                Icon fondo1 = new ImageIcon(imagen1.getImage().getScaledInstance((int) ((float) IMG.getWidth() * relacionW), (int) ((float) IMG.getHeight() * relacionH), 100));
+                IMG.setIcon(fondo1);
+            } catch (Exception e){
+                
+            }
+        }
+    }
+    
     private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
         // Abrir archivo .exp
         try {
@@ -364,6 +459,148 @@ public class main extends javax.swing.JFrame {
             }
         }
     }//GEN-LAST:event_jMenuItem1ActionPerformed
+
+    private void btnGenerarAutomatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAutomatasActionPerformed
+        // Botón Generar Automatas
+        Analizadores.Sintactico parser;
+        comboExpresion.removeAllItems();
+        try{
+            errors.clear();
+            Lexico lexical = new Analizadores.Lexico(new StringReader(Editor.getText()));
+            parser = new Analizadores.Sintactico(lexical);
+            parser.cont = lexical.cont;
+            parser.parse();
+            arboles = parser.List_AFD;
+            errors.addAll(lexical.errors);
+            errors.addAll(parser.Errors);
+            txtTotalErrores.setText("Total de Errores: " + errors.size());
+            for (AFD arbol: arboles.values()) {
+                arbol.GraficaArbol();
+                comboExpresion.addItem(arbol.nombre);
+            }
+            comboExpresion.setSelectedIndex(0);
+            try {
+                Thread.sleep(300);
+            } catch (Exception e) {
+                System.out.println("Thread Interrupted");
+            }
+        } catch (Exception ex) {
+            System.out.println("Error fatal en compilacion de entrada.");
+            System.out.println("Causa: " + ex.getCause());
+        }
+    }//GEN-LAST:event_btnGenerarAutomatasActionPerformed
+
+    private void btnAnalizarEntradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarEntradasActionPerformed
+        //Botón Analizar Entradas:
+        Analizadores.Sintactico parser;
+        try{
+            File directorio = new File("./SALIDAS_201700761");
+            if (!directorio.exists()) {
+                directorio.mkdirs();
+            }
+            errors.clear();
+            Lexico lexical = new Analizadores.Lexico(new StringReader(Editor.getText()));
+            parser = new Analizadores.Sintactico(lexical);
+            parser.cont = lexical.cont;
+            parser.parse();
+            arboles = parser.List_AFD;
+            errors.addAll(lexical.errors);
+            errors.addAll(parser.Errors);
+            txtTotalErrores.setText("Total de Errores: " + errors.size());
+            List<String[]> comprobaciones = parser.Validacion;
+            FileWriter fichero;
+            PrintWriter escritor;
+            Gson g = new Gson();
+            fichero = new FileWriter("./SALIDAS_201700761/" + name + ".json");
+            escritor = new PrintWriter(fichero);
+            escritor.print("[\n");
+            int cont = 0;
+            for (String[] x : comprobaciones) {
+                if (arboles.get(x[0]) != null) {
+                    if (arboles.get(x[0]).ValidarCadena(x[1])) {
+                        Validation val = new Validation(x[1], x[0], "Cadena Valida");
+                        if (cont < comprobaciones.size()) {
+                            escritor.print(g.toJson(val) + ",\n");
+                        } else {
+                            escritor.print(g.toJson(val) + "\n");
+                        }
+                        Consola.setText(Consola.getText() + "\n");
+                        Consola.setText(Consola.getText() + "La expresion: \"" + x[1] + "\" es valida con la expresion Regular " + x[0]);
+                    } else {
+                        Consola.setText(Consola.getText() + "\n");
+                        Consola.setText(Consola.getText() + "La expresion: \"" +x[1] + "\" es invalida con la expresión Regular " +x[0]);
+                    }
+                } else {
+                    System.out.println("No existe el automata");
+                }
+                cont++;
+            }
+            escritor.print("]\n");
+            fichero.close();
+            btnJSON.setEnabled(true);
+        } catch (Exception ex) {
+            System.out.println("Error fatal en compilacion de entrada.");
+            System.out.println("Causa: " + ex.getCause());
+        }
+    }//GEN-LAST:event_btnAnalizarEntradasActionPerformed
+
+    private void btnJSONActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnJSONActionPerformed
+        // TODO add your handling code here:
+        try{
+            ProcessBuilder p = new ProcessBuilder();
+            p.command("cmd.exe", "/c", System.getProperty("user.dir") + "SALIDAS_201700761/" + name + ".json");
+            p.start();
+        } catch (Exception e) {
+            
+        }
+    }//GEN-LAST:event_btnJSONActionPerformed
+
+    private void btnAnteriorActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnteriorActionPerformed
+        // TODO add your handling code here:
+        if (comboExpresion.getItemCount() > 0) {
+            if (actual == 0) {
+                actual = comboExpresion.getItemCount();
+                comboExpresion.setSelectedIndex(actual);
+            } else {
+                actual--;
+                comboExpresion.setSelectedIndex(actual);
+            }
+        }
+    }//GEN-LAST:event_btnAnteriorActionPerformed
+
+    private void btnAbrirActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAbrirActionPerformed
+        // TODO add your handling code here:
+        try {
+            ProcessBuilder p = new ProcessBuilder();
+            p.command("cmd.exe", "/c", System.getProperty("user.dir") + direccion.substring(1, direccion.length()));
+            p.start();
+        } catch (Exception e) {
+            
+        }
+    }//GEN-LAST:event_btnAbrirActionPerformed
+
+    private void btnSiguienteActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnSiguienteActionPerformed
+        // TODO add your handling code here:
+        if (comboExpresion.getItemCount() > 0) {
+            if (actual == comboExpresion.getItemCount()) {
+                actual = 0;
+                comboExpresion.setSelectedIndex(actual);
+            } else {
+                actual++;
+                comboExpresion.setSelectedIndex(actual);
+            }
+        }
+    }//GEN-LAST:event_btnSiguienteActionPerformed
+
+    private void btnLimpiarConsolaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnLimpiarConsolaActionPerformed
+        // TODO add your handling code here:
+        Consola.setText("");
+    }//GEN-LAST:event_btnLimpiarConsolaActionPerformed
+
+    private void btnErroresActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnErroresActionPerformed
+        // TODO add your handling code here:
+        
+    }//GEN-LAST:event_btnErroresActionPerformed
 
     /**
      * @param args the command line arguments

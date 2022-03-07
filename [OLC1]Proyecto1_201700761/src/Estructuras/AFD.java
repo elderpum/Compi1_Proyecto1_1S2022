@@ -391,4 +391,89 @@ public class AFD {
             System.out.println("Error al crear la grafica del AFD");
         }
     }
+    
+    public boolean VerificarConj(int caracter, String x){
+        if (x.split("~").length == 2) {
+            int max = x.charAt(2);
+            int min = x.charAt(0);
+            if (min > max) {
+                int aux = max;
+                min = max;
+                max = aux;
+            }
+            if ((int)caracter >= min && (int)caracter <= max) {
+                return true;
+            }
+            return false;
+        } else {
+            for (String g: x.split(",")) {
+                int val = (int)g.charAt(0);
+                if (caracter == val) {
+                    return true;
+                }
+            }
+            return false;
+        }
+    }
+    
+    public boolean ValidarCadena(String cadena) {
+        String actual = "S0";
+        boolean respuesta = false;
+        for (int i = 0; i < cadena.length(); i++) {
+            respuesta = false;
+            char caracter = cadena.charAt(i);
+            for (String[] estado: this.transiciones) {
+                if (caracter == '\\') {
+                    if ((i + 1) < cadena.length()) {
+                        if (cadena.charAt(i + 1) == '\'') {
+                            caracter = '\'';
+                            i++;
+                        } else if (cadena.charAt(i + 1) == 'n') {
+                            caracter = '\n';
+                            i++;
+                        } else if (cadena.charAt(i + 1) == '\"') {
+                            caracter = '\"';
+                            i++;
+                        }
+                    }
+                }
+                if (estado[0].equals(actual)) {
+                    String alfabeto = estado[2];
+                    if (CONJ.get(estado[2]) != null) {
+                        actual = estado[1];
+                        respuesta = VerificarConj((int)caracter, CONJ.get(estado[2]));
+                    } else {
+                        char alfa = estado[2].charAt(0);
+                        if (estado[2].length() == 2 && alfa == '\\') {
+                            if (estado[2].charAt(i) == '\'') {
+                                alfa = '\'';
+                            } else if (estado[2].charAt(i) == 'n') {
+                                alfa = '\n';
+                            } else if (estado[2].charAt(i) == '\"') {
+                                alfa = '\"';
+                            }
+                        }
+                        if ((int)caracter == (int)alfa) {
+                            actual = estado[1];
+                            respuesta = true;
+                        } else {
+                            respuesta = false;
+                        }
+                    }
+                }
+                if (respuesta) {
+                    break;
+                }
+            }
+            if (!respuesta) {
+                break;
+            }
+        }
+        if (respuesta) {
+            System.out.println("Cadena: " + cadena + " es valida con la expresion: " + this.nombre);
+        } else {
+            System.out.println("Cadena: " + cadena + " no es valida con la expresion: " + this.nombre);
+        }
+        return respuesta;
+    }
 }
