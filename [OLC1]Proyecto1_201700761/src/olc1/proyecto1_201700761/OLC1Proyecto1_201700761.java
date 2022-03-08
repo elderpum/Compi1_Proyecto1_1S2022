@@ -5,7 +5,7 @@
  */
 package olc1.proyecto1_201700761;
 
-import Analizadores.Lexico;
+import analizadores.Lexico;
 import Estructuras.AFD;
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -23,21 +23,35 @@ public class OLC1Proyecto1_201700761 {
      */
     public static void main(String[] args) {
         // TODO code application logic here
+        //generarCompilador();
         main pantalla = new main();
         pantalla.setVisible(true);
     }
     
     //Vamos a hacer unas pruebas 
     public static void interpretar(String path){
-        Analizadores.Sintactico parser;
+        analizadores.Sintactico parser;
         try{
-            parser = new Analizadores.Sintactico(new Analizadores.Lexico(new BufferedReader(new FileReader(path))));
+            parser = new analizadores.Sintactico(new analizadores.Lexico(new BufferedReader(new FileReader(path))));
             parser.parse();
-            Map<String, AFD> arbol = parser.List_AFD;
+            Map<String, AFD> arbol = parser.LIST_AFD;
             System.out.println(arbol);
         } catch (Exception ex){
             System.out.println("Error fatal en compilacion de la entrada");
             System.out.println("Causa: " + ex.getCause());
         }
     }
+    
+    /*public static void generarCompilador(){
+        try{
+            String ruta = "src/Analizadores/";
+            String opcFlex[] = {ruta + "Lexico.jflex", "-d", ruta};
+            jflex.Main.generate(opcFlex);
+            
+            String opcCup[] = {"-destdir", ruta, "-parser", "parser", ruta + "Sintactico.cup"};
+            java_cup.Main.main(opcCup);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }*/
 }

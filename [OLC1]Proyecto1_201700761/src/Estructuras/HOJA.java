@@ -9,17 +9,17 @@ package Estructuras;
  *
  * @author Elder
  */
-public class Hoja {
-    public int id;
+public class HOJA {
+    public int identificador;
     public String dato;
     public boolean anulable;
     public String primeros;
     public String ultimos;
-    public Hoja izquierda;
-    public Hoja derecha;
+    public HOJA izquierda;
+    public HOJA derecha;
     public String tipo;
-
-    public Hoja(String dato, Hoja izquierda, Hoja derecha, String tipo) {
+    
+    public HOJA(String dato, HOJA izquierda, HOJA derecha, String tipo){
         this.dato = dato;
         this.izquierda = izquierda;
         this.derecha = derecha;
@@ -27,14 +27,15 @@ public class Hoja {
         this.primeros = primeros;
         this.ultimos = ultimos;
         try{
-            DefinirAnulables(derecha, izquierda, tipo);
-        } catch (Exception e){
-            System.out.println("Error al crear anulables");
+            DefinirAnulable(derecha, izquierda, tipo);
+        }catch(Exception e){
+            System.out.println("error al crear anulables");
         }
+
     }
     
-    public void DefinirAnulables(Hoja derecha, Hoja izquierda, String tipo){
-        switch(tipo) {
+    public void DefinirAnulable(HOJA derecha, HOJA izquierda, String tipo){
+        switch(tipo){
             case "hoja":
                 this.anulable = false;
                 break;
@@ -42,7 +43,7 @@ public class Hoja {
                 this.anulable = derecha.anulable && izquierda.anulable;
                 break;
             case "|":
-                this.anulable = derecha.anulable && izquierda.anulable;
+                this.anulable = derecha.anulable || izquierda.anulable;
                 break;
             case "?":
                 this.anulable = true;
@@ -53,8 +54,8 @@ public class Hoja {
             case "+":
                 this.anulable = false;
                 break;
-            default:
-                break;
+        default:
+            break;
         }
     }
 }

@@ -8,7 +8,7 @@ package olc1.proyecto1_201700761;
 import Estructuras.AFD;
 import Estructuras.Errores;
 import Estructuras.Validation;
-import Analizadores.Lexico;
+import analizadores.Lexico;
 import com.google.gson.Gson;
 import java.io.BufferedReader;
 import java.io.File;
@@ -265,7 +265,7 @@ public class main extends javax.swing.JFrame {
                         .addComponent(btnAnterior)
                         .addComponent(btnAbrir)
                         .addComponent(btnSiguiente)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 40, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 37, Short.MAX_VALUE)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 154, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(18, 18, 18)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
@@ -485,50 +485,50 @@ public class main extends javax.swing.JFrame {
 
     private void btnGenerarAutomatasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGenerarAutomatasActionPerformed
         // Botón Generar Automatas
-        Analizadores.Sintactico pars;
+        analizadores.Sintactico pars;
         comboExpresion.removeAllItems();
-        try{
+        try {
             errors.clear();
-            Lexico lexical = new Analizadores.Lexico(new BufferedReader(new FileReader(path)));
-            pars = new Analizadores.Sintactico(lexical);
+            Lexico lexical = new analizadores.Lexico(new StringReader(Editor.getText()));
+            pars=new analizadores.Sintactico(lexical);
             pars.cont = lexical.cont;
             pars.parse();
-            arboles = pars.List_AFD;
-            errors.addAll(lexical.errors);
+            arboles = pars.LIST_AFD;
+            errors.addAll(lexical.Errors);
             errors.addAll(pars.Errors);
-            txtTotalErrores.setText("Total de Errores: " + errors.size());
-            for (AFD arbol: arboles.values()) {
+            txtTotalErrores.setText("Numero de errores: "+errors.size());
+            for(AFD arbol: arboles.values()){
                 arbol.GraficarTodo();
                 comboExpresion.addItem(arbol.nombre);
             }
             comboExpresion.setSelectedIndex(0);
-            try {
-                Thread.sleep(300);
-            } catch (Exception e) {
-                System.out.println("Thread Interrupted");
+            try{ Thread.sleep(300); }
+            catch(Exception e ) 
+            { 
+                System.out.println("Thread Interrupted"); 
             }
             SeleccionarIMG((String)comboExpresion.getSelectedItem(), (String)comboTipo.getSelectedItem());
         } catch (Exception ex) {
-            System.out.println("Error fatal en compilacion de entrada.");
-            System.out.println("Causa: " + ex.getCause());
-        }
+            System.out.println("Error fatal en compilación de entrada.");
+            System.out.println("Causa: "+ex.getCause());
+        } 
     }//GEN-LAST:event_btnGenerarAutomatasActionPerformed
 
     private void btnAnalizarEntradasActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAnalizarEntradasActionPerformed
         //Botón Analizar Entradas:
-        Analizadores.Sintactico pars;
+        analizadores.Sintactico pars;
         try{
             File directorio = new File("./SALIDAS_201700761");
             if (!directorio.exists()) {
                 directorio.mkdirs();
             }
             errors.clear();
-            Lexico lexical = new Analizadores.Lexico(new StringReader(Editor.getText()));
-            pars = new Analizadores.Sintactico(lexical);
+            Lexico lexical = new analizadores.Lexico(new StringReader(Editor.getText()));
+            pars = new analizadores.Sintactico(lexical);
             pars.cont = lexical.cont;
             pars.parse();
-            arboles = pars.List_AFD;
-            errors.addAll(lexical.errors);
+            arboles = pars.LIST_AFD;
+            errors.addAll(lexical.Errors);
             errors.addAll(pars.Errors);
             txtTotalErrores.setText("Total de Errores: " + errors.size());
             List<String[]> comprobaciones = pars.Validacion;
@@ -691,4 +691,5 @@ public class main extends javax.swing.JFrame {
     private javax.swing.JLabel txtNombreArchivo;
     private javax.swing.JLabel txtTotalErrores;
     // End of variables declaration//GEN-END:variables
+
 }

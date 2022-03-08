@@ -19,82 +19,84 @@ import java.util.Map;
  * @author Elder
  */
 public class AFD {
-    Hoja cabeza;
+    HOJA cabeza;
+    int ident = 1;
     AFN afn;
-    int identificador = 1;
     int g = 0;
     Map<String, String> CONJ = new HashMap<>();
     List<String> alfabeto = new ArrayList<>();
     List<String> terminales = new ArrayList<>();
     List<String[]> transiciones = new ArrayList<>();
-    Map<String, String[]> listaTransiciones = new HashMap<>();
-    Map<String, String> listaAlfabeto = new HashMap<>();
+    Map<String, String[]> lista_transiciones = new HashMap<>();
+    Map<String, String> lista_alfabeto = new HashMap<>();
     Map<Integer, String[]> siguientes = new HashMap<>();
     String terminal;
     public String nombre;
     int num = 1;
-
-    public AFD(Hoja cabeza, String nombre, Map<String, String> conjunto) {
+    
+    public AFD(HOJA cabeza, String nombre, Map<String, String> conjunto){
         this.cabeza = cabeza;
         this.nombre = nombre;
         this.CONJ.putAll(conjunto);
         generarDatos();
-        CrearTransiciones();
+        CREARTRANSICIONES();
         CrearAFN();
     }
     
     public void GraficarTodo(){
-        GraficaArbol();
-        GraficarSiguientes();
+        GRAFICARARBOL();
+        GRAFICARSIGUIENTES();
         GraficarAFD();
-        GraficarTransiciones();
-        this.afn.generarArbol();
+        GRAFICARTRANSICIONES();
+        this.afn.GenerarArbol();
     }
     
     public void generarDatos(){
         this.cabeza = _generarDatos(this.cabeza);
     }
     
-    public Hoja _generarDatos(Hoja nodo){
-        if (nodo.izquierda != null) {
+    public HOJA _generarDatos(HOJA nodo){
+        
+        if (nodo.izquierda!=null){
             nodo.izquierda = _generarDatos(nodo.izquierda);
         }
         
-        if (nodo.derecha != null) {
+        if(nodo.derecha !=null){
             nodo.derecha = _generarDatos(nodo.derecha);
         }
         
-        if ("hoja".equalsIgnoreCase(nodo.tipo)) {
-            nodo.primeros = this.identificador + "";
-            nodo.ultimos = this.identificador + "";
-            nodo.id = this.identificador;
-            if (listaAlfabeto.get(nodo.dato) == null && !nodo.dato.equals("#")) {
-                listaAlfabeto.put(nodo.dato, nodo.dato);
+        if("hoja".equalsIgnoreCase(nodo.tipo)){
+            nodo.primeros = this.ident +"";
+            nodo.ultimos = this.ident +"";
+            nodo.identificador = this.ident;
+            if(lista_alfabeto.get(nodo.dato)==null && !nodo.dato.equals("#")){
+                lista_alfabeto.put(nodo.dato, nodo.dato);
                 this.alfabeto.add(nodo.dato);
             }
-            String[] datos = {nodo.dato, this.identificador + "", ""};
-            this.siguientes.put(this.identificador, datos);
-            this.identificador++;
-        } else {
+            String[] datos = {nodo.dato, this.ident+"", ""};
+            this.siguientes.put(this.ident,datos);
+            this.ident++;
+        }
+        else{
             nodo = tipo(nodo);
         }
-        if (".".equals(nodo.tipo) || "*".equals(nodo.tipo) || "+".equals(nodo.tipo)) {
+        if(".".equals(nodo.tipo) || "*".equals(nodo.tipo) || "+".equals(nodo.tipo)){
             siguientes(nodo);
         }
         return nodo;
     }
     
-    public Hoja tipo(Hoja nodo) {
-        switch(nodo.tipo) {
+    public HOJA tipo(HOJA nodo){
+        switch(nodo.tipo){
             case ".":
                 if (nodo.izquierda.anulable) {
-                    nodo.primeros = nodo.izquierda.primeros + "," + nodo.derecha.primeros;
-                } else {
-                    nodo.primeros = nodo.primeros;
+                    nodo.primeros = nodo.izquierda.primeros+","+nodo.derecha.primeros;
+                }else{
+                    nodo.primeros = nodo.izquierda.primeros;
                 }
                 if (nodo.derecha.anulable) {
-                    nodo.ultimos = nodo.izquierda.ultimos + "," + nodo.derecha.ultimos;
-                } else {
+                    nodo.ultimos = nodo.izquierda.ultimos+","+nodo.derecha.ultimos;
+                }else{
                     nodo.ultimos = nodo.derecha.ultimos;
                 }
                 break;
@@ -110,16 +112,17 @@ public class AFD {
                 nodo.primeros = nodo.izquierda.primeros;
                 nodo.ultimos = nodo.izquierda.ultimos;
                 break;
-            default:
-                nodo.primeros = nodo.izquierda.primeros;
-                nodo.ultimos = nodo.izquierda.ultimos;
-                break;
+        default:
+            nodo.primeros = nodo.izquierda.primeros;
+            nodo.ultimos = nodo.izquierda.ultimos;
+            break;
         }
         return nodo;
     }
-    
-    public void siguientes(Hoja nodo) {
-        String[] anteriores = nodo.izquierda.ultimos.split(",");
+
+    public void siguientes(HOJA nodo){
+        String[] anteriores;
+        anteriores = nodo.izquierda.ultimos.split(",");
         switch(nodo.tipo){
             case ".":
                 for (String ante: anteriores){
@@ -146,7 +149,7 @@ public class AFD {
         }
     }
     
-    public void GraficaArbol(){
+    public void GRAFICARARBOL(){
         this.num = 1;
         File directorio = new File("./ARBOLES_201700761");
         if (!directorio.exists()) {
@@ -154,33 +157,30 @@ public class AFD {
         }
         FileWriter fichero;
         PrintWriter escritor;
-        try{
-            fichero = new FileWriter("./ARBOLES_201700761/" + nombre + ".dot");
+        try
+        {
+            fichero = new FileWriter("./ARBOLES_201700761/"+nombre+".dot");
             escritor = new PrintWriter(fichero);
             escritor.print("digraph grafica{\n"
-                    + "rankdir=TB;\n"
-                    + "forcelabels=true;\n"
-                    + "node [shape = plaintext];\n");
-            escritor.print(_GraficaArbol(this.cabeza, 0));
+                + "rankdir=TB;\n"
+                + "forcelabels= true;\n"
+                + "node [shape = plaintext];\n");
+            escritor.print(_GRAFICARARBOL(this.cabeza, 0));
             escritor.print("\n}");
             fichero.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec("dot -Tjpg -o ./ARBOLES_201700761/" + nombre + ".jpg graf ./ARBOLES_201700761/" + nombre + ".dot");
-        } catch (IOException e) {
-            System.out.println("Error al crear el grafo");
-        }
+            rt.exec( "dot -Tjpg -o ./ARBOLES_201700761/"+nombre+".jpg graf ./ARBOLES_201700761/"+nombre+".dot");
+        }catch(IOException e){
+            System.out.println("error al crear la grafica");
+        } 
     }
     
-    public String _GraficaArbol(Hoja nodo, int num){
+    public String _GRAFICARARBOL(HOJA nodo, int num){
         int cod = this.num;
         int cod2 = 0;
         int cod3 = 0;
         String anu = "";
-        if (nodo.anulable) {
-            anu = "A";
-        } else {
-            anu = "N";
-        }
+        if (nodo.anulable){anu = "A";}else{anu = "N";}
         String tabla = "<<table border = '0' cellboder = '1' CELLSPACIONG='0'>\n"+
                 "<tr>\n"
                 + "<td></td>\n"
@@ -194,42 +194,43 @@ public class AFD {
                 + "</tr>\n"+
                 "<tr>\n"
                 + "<td></td>\n"
-                + "<td>"+nodo.id+"</td>\n"
+                + "<td>"+nodo.identificador+"</td>\n"
                 + "<td></td>\n"
                 + "</tr>\n"
                 + "</table>>";
         String text = "nodo"+this.num+" [label = "+tabla+"];\n";
         this.num++;
-        if (nodo.izquierda != null) {
+        if(nodo.izquierda!=null){
             cod2 = this.num;
-            text += _GraficaArbol(nodo.izquierda, this.num);
+            text+= _GRAFICARARBOL(nodo.izquierda, this.num);
             this.num++;
         }
-        if (nodo.derecha != null) {
+        if(nodo.derecha!=null){
             cod3 = this.num;
-            text += _GraficaArbol(nodo.derecha, this.num);
+            text+= _GRAFICARARBOL(nodo.derecha, this.num);
             this.num++;
         }
-        if (!"hoja".equalsIgnoreCase(nodo.tipo)) {
-            if (cod2 != 0) {
-                text += "nodo" + cod + "->" + "nodo" + (cod2) + "\n";
+        if(!"hoja".equalsIgnoreCase(nodo.tipo)){
+            if(cod2!=0){
+                text+= "nodo"+cod+"->"+"nodo"+(cod2)+"\n";
             }
-            if (cod3 != 0) {
-                text += "nodo" + cod + "->" + "nodo" + (cod3) + "\n";
+            if(cod3!=0){
+                text+= "nodo"+cod+"->"+"nodo"+(cod3)+"\n";
             }
         }
         return text;
     }
     
-    public void GraficarSiguientes() {
+    public void GRAFICARSIGUIENTES(){
         File directorio = new File("./SIGUIENTES_201700761");
         if (!directorio.exists()) {
             directorio.mkdirs();
         }
         FileWriter fichero;
         PrintWriter escritor;
-        try {
-            fichero = new FileWriter("./SIGUIENTES_201700761/" + nombre + ".dot");
+        try
+        {
+            fichero = new FileWriter("./SIGUIENTES_201700761/"+nombre+".dot");
             escritor = new PrintWriter(fichero);
             escritor.print("digraph grafica{\n"
                 + "rankdir=LR;\n"
@@ -250,18 +251,18 @@ public class AFD {
                     + "</tr>\n"
                     + td
                     + "</table>>";
-            String text = "nodo" + this.num + " [label = " + tabla + "];\n";
+            String text = "nodo"+this.num+" [label = "+tabla+"];\n";
             escritor.print(text);
             escritor.print("\n}");
             fichero.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec( "dot -Tjpg -o ./SIGUIENTES_201700761/" + nombre + ".jpg graf ./SIGUIENTES_201700761/" + nombre + ".dot");
-        } catch (IOException e) {
-            System.out.println("Error al crear la grafica de siguientes");
-        }
+            rt.exec( "dot -Tjpg -o ./SIGUIENTES_201700761/"+nombre+".jpg graf ./SIGUIENTES_201700761/"+nombre+".dot");
+        }catch(IOException e){
+            System.out.println("error al crear la grafica");
+        }  
     }
     
-    public void GraficarTransiciones() {
+    public void GRAFICARTRANSICIONES(){
         File directorio = new File("./TRANSICIONES_201700761");
         if (!directorio.exists()) {
             directorio.mkdirs();
@@ -270,58 +271,58 @@ public class AFD {
         PrintWriter escritor;
         try
         {
-            fichero = new FileWriter("./TRANSICIONES_201700761/" + nombre + ".dot");
+            fichero = new FileWriter("./TRANSICIONES_201700761/"+nombre+".dot");
             escritor = new PrintWriter(fichero);
             escritor.print("digraph grafica{\n"
                 + "rankdir=LR;\n"
                 + "forcelabels= true;\n"
                 + "node [shape = plain];\n");
             String td = "";
-            for(String[] y: listaTransiciones.values()){
+            for(String[] y: lista_transiciones.values()){
                 td+="<tr>\n";
-                td+="<td> " + y[0] + " {" + y[1] + "} </td>\n";
+                td+="<td> "+y[0]+" {"+y[1]+"} </td>\n";
                 for (String x: alfabeto) {
                     boolean encontrado = false;
                     for(String[] dato: this.transiciones){
                         if (dato[2].equals(x) && y[0].equals(dato[0])) {
-                            td += "<td> " + dato[1] + " </td>\n";
+                            td+="<td> "+dato[1]+" </td>\n";
                             encontrado = true;
                             break;
                         }
                     }
                     if (!encontrado) {
-                        td += "<td> -- </td>\n";
+                        td+="<td> -- </td>\n";
                     }
                 }
-                td += "</tr>\n";
+                td+= "</tr>\n";
             }
             String tabla = "<<table border = '1' cellboder = '1' cellspacing='0' cellpadding='10'>\n"
                     + "<tr>\n"
                     + "<td>ESTADO</td>\n";
             for (String x: alfabeto) {
-                tabla += "<td>" + x + "</td>\n";
+                tabla+="<td>"+x+"</td>\n";
             }
             tabla += "</tr>\n"
                     + td
                     + "</table>>";
-            String text = "nodo" + this.num + " [label = " + tabla + "];\n";
+            String text = "nodo"+this.num+" [label = "+tabla+"];\n";
             escritor.print(text);
             escritor.print("\n}");
             fichero.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec( "dot -Tjpg -o ./TRANSICIONES_201700761/" + nombre + ".jpg graf ./TRANSICIONES_201700761/" + nombre + ".dot");
+            rt.exec( "dot -Tjpg -o ./TRANSICIONES_201700761/"+nombre+".jpg graf ./TRANSICIONES_201700761/"+nombre+".dot");
         }catch(IOException e){
-            System.out.println("error al crear la grafica de transiciones");
+            System.out.println("error al crear la grafica");
         }
     }
     
-    public void CrearTransiciones(){
-        String[] data = {"S0", this.cabeza.primeros};
-        this.listaTransiciones.put(this.cabeza.primeros, data);
-        _CrearTransiciones(this.listaTransiciones.get(this.cabeza.primeros));
+    public void CREARTRANSICIONES(){
+        String [] data = {"S0",this.cabeza.primeros};
+        this.lista_transiciones.put(this.cabeza.primeros,data);
+        _CREARTRANSICIONES(this.lista_transiciones.get(this.cabeza.primeros));
     }
     
-    public void _CrearTransiciones(String[] T){
+    public void _CREARTRANSICIONES(String[] T){
         boolean ter = false;
         List<String[]> transicion = new ArrayList<>();
         for(String y: this.alfabeto){
@@ -331,8 +332,8 @@ public class AFD {
                 String[] sig = this.siguientes.get(Integer.parseInt(k));
                 if(y.equals(sig[0])){
                     for(String g: sig[2].split(",")){
-                        if(tran.get(g) == null){
-                            if(Integer.parseInt(g) == identificador-1){
+                        if(tran.get(g)==null){
+                            if(Integer.parseInt(g) ==ident-1){
                                 ter = true;
                             }
                             tran.put(g, g);
@@ -343,23 +344,23 @@ public class AFD {
                     }
                 }
             }
-            if(this.listaTransiciones.get(trans)==null && !trans.isEmpty()){
-                String[] D = {"S"+this.listaTransiciones.size(), trans};
+            if(this.lista_transiciones.get(trans)==null && !trans.isEmpty()){
+                String[] D = {"S"+this.lista_transiciones.size(), trans};
                 String[] dd = {T[0],D[0],y};
                 transiciones.add(dd);
                 transicion.add(D);
                 if(ter){terminales.add(D[0]);}
-                this.listaTransiciones.put(trans,D);
+                this.lista_transiciones.put(trans,D);
             }else{
                 if(!trans.isEmpty()){
-                    String [] N = this.listaTransiciones.get(trans);
+                    String [] N = this.lista_transiciones.get(trans);
                     String [] dd = {T[0],N[0],y};
                     transiciones.add(dd);
                 }
             }
         }
         for(String[] G: transicion){
-            _CrearTransiciones(G);
+            _CREARTRANSICIONES(G);
         }
     }
     
@@ -372,17 +373,17 @@ public class AFD {
         PrintWriter escritor;
         try
         {
-            fichero = new FileWriter("./AFD_201700761/" + nombre + ".dot");
+            fichero = new FileWriter("./AFD_201700761/"+nombre+".dot");
             escritor = new PrintWriter(fichero);
             escritor.print("digraph grafica{\n"
                 + "rankdir=LR;\n"
                 + "forcelabels= true;\n"
                 + "node [shape = circle];\n");
-            for(int x=0; x<this.listaTransiciones.size();x++){
+            for(int x=0; x<this.lista_transiciones.size();x++){
                 if (terminales.contains("S"+x)){
-                    escritor.print("S" + x + " [label = \"" + "S" + x+ "\", shape = doublecircle];\n");
+                    escritor.print("S"+x+" [label = \""+"S"+x+"\", shape = doublecircle];\n");
                 }else{
-                    escritor.print("S" + x + " [label = \"" + "S" + x+"\"];\n");
+                    escritor.print("S"+x+" [label = \""+"S"+x+"\"];\n");
                 }
             }
             for(String[]k: transiciones){
@@ -393,34 +394,35 @@ public class AFD {
                 if(" ".equals(k[2])){
                     dat = "\\\" \\\"";
                 }
-                escritor.print(k[0] + "->" + k[1] + "[label=\"" + dat + "\"]\n");
+                escritor.print(k[0]+"->"+k[1]+"[label=\""+dat+"\"]\n");
             }
             escritor.print("\n}");
             fichero.close();
             Runtime rt = Runtime.getRuntime();
-            rt.exec( "dot -Tjpg -o ./AFD_201700761/" + nombre+".jpg graf ./AFD_201700761/" + nombre + ".dot");
+            rt.exec( "dot -Tjpg -o ./AFD_201700761/"+nombre+".jpg graf ./AFD_201700761/"+nombre+".dot");
         }catch(IOException e){
-            System.out.println("Error al crear la grafica del AFD");
+            System.out.println("error al crear la grafica");
         }
     }
     
-    public boolean VerificarConj(int caracter, String x){
-        if (x.split("~").length == 2) {
+    public boolean VeriConj(int caracter, String x){
+        if(x.split("~").length==2){
             int max = x.charAt(2);
             int min = x.charAt(0);
-            if (min > max) {
+            if(min>max){
                 int aux = max;
                 min = max;
                 max = aux;
             }
-            if ((int)caracter >= min && (int)caracter <= max) {
+            if((int)caracter >= min && (int)caracter<=max){
                 return true;
             }
             return false;
-        } else {
-            for (String g: x.split(",")) {
+        }
+        else{
+            for(String g: x.split(",")){
                 int val = (int)g.charAt(0);
-                if (caracter == val) {
+                if(caracter == val){
                     return true;
                 }
             }
@@ -428,107 +430,91 @@ public class AFD {
         }
     }
     
-    public boolean ValidarCadena(String cadena) {
+    public boolean ValidarCadena(String cadena){
         String actual = "S0";
         boolean respuesta = false;
-        for (int i = 0; i < cadena.length(); i++) {
+        for(int x=0; x<cadena.length(); x++){
             respuesta = false;
-            char caracter = cadena.charAt(i);
-            for (String[] estado: this.transiciones) {
-                if (caracter == '\\') {
-                    if ((i + 1) < cadena.length()) {
-                        if (cadena.charAt(i + 1) == '\'') {
+            char caracter = cadena.charAt(x);
+            for(String[] estado: this.transiciones){
+                if(caracter=='\\'){
+                    if((x+1)<cadena.length()){
+                        if(cadena.charAt(x+1)=='\''){
                             caracter = '\'';
-                            i++;
-                        } else if (cadena.charAt(i + 1) == 'n') {
+                            x++;
+                        }else if(cadena.charAt(x+1)=='n'){
                             caracter = '\n';
-                            i++;
-                        } else if (cadena.charAt(i + 1) == '\"') {
+                            x++;
+                        }else if(cadena.charAt(x+1)=='\"'){
                             caracter = '\"';
-                            i++;
+                            x++;
                         }
                     }
                 }
-                if (estado[0].equals(actual)) {
-                    String alfabeto = estado[2];
-                    if (CONJ.get(estado[2]) != null) {
+                if(estado[0].equals(actual)){
+                    String alfabeto = estado[2]; 
+                    if(CONJ.get(estado[2])!=null){
                         actual = estado[1];
-                        respuesta = VerificarConj((int)caracter, CONJ.get(estado[2]));
-                    } else {
+                        respuesta = VeriConj((int)caracter, CONJ.get(estado[2]));
+                    }
+                    else{
                         char alfa = estado[2].charAt(0);
-                        if (estado[2].length() == 2 && alfa == '\\') {
-                            if (estado[2].charAt(i) == '\'') {
+                        if(estado[2].length()==2 && alfa=='\\'){
+                            if(estado[2].charAt(1)=='\''){
                                 alfa = '\'';
-                            } else if (estado[2].charAt(i) == 'n') {
+                            }else if(estado[2].charAt(1)=='n'){
                                 alfa = '\n';
-                            } else if (estado[2].charAt(i) == '\"') {
+                            }else if(estado[2].charAt(1)=='\"'){
                                 alfa = '\"';
                             }
                         }
-                        if ((int)caracter == (int)alfa) {
+                        if((int)caracter == (int)alfa){
                             actual = estado[1];
                             respuesta = true;
-                        } else {
-                            respuesta = false;
-                        }
+                        }else{respuesta = false;}
                     }
                 }
-                if (respuesta) {
-                    break;
-                }
+                if(respuesta){break;}
             }
-            if (!respuesta) {
-                break;
-            }
+            if(!respuesta){break;}
         }
-        if (respuesta) {
-            System.out.println("Cadena: " + cadena + " es valida con la expresion: " + this.nombre);
-        } else {
-            System.out.println("Cadena: " + cadena + " no es valida con la expresion: " + this.nombre);
+        if(respuesta){
+            System.out.println("cadena: "+cadena+" es valida con la expresion: "+this.nombre);
+        }else{
+            System.out.println("cadena: "+cadena+" no es valida con la expresion: "+this.nombre);
         }
         return respuesta;
     }
     
     public void CrearAFN(){
-        this.afn = new AFN(_CrearAFN(cabeza.izquierda), nombre);
-        afn.CrearAFN();
+        this.afn = new AFN(_CrearAFN(cabeza.izquierda) , nombre);
+        afn.CREAR_AFN();
     }
     
-    public Hoja_AFN _CrearAFN(Hoja nodo){
-        if (!nodo.tipo.equals("hoja")) {
+    public HOJA_AFN _CrearAFN(HOJA nodo){
+        if (!nodo.tipo.equals("hoja")){
             String az = "";
             String ad = "";
             String alfa[] = null;
-            Hoja_AFN izquierda = null;
-            Hoja_AFN derecha = null;
-            if (nodo.izquierda != null) {
-                if (!nodo.izquierda.tipo.equals("hoja")) {
-                    izquierda = _CrearAFN(nodo.izquierda);
-                } else {
-                    az = nodo.izquierda.dato;
-                }
+            HOJA_AFN izquierda = null;
+            HOJA_AFN derecha = null;
+            if(nodo.izquierda!=null){
+                if(!nodo.izquierda.tipo.equals("hoja")){izquierda = _CrearAFN(nodo.izquierda);}
+                else{az = nodo.izquierda.dato;}
             }
-            if (nodo.derecha != null) {
-                if (!nodo.derecha.tipo.equals("hoja")) {
-                    derecha = _CrearAFN(nodo.derecha);
-                } else {
-                    ad = nodo.derecha.dato;
-                }
-            }
+            if(nodo.derecha!=null){
+            if(!nodo.derecha.tipo.equals("hoja")){derecha = _CrearAFN(nodo.derecha);}
+            else{ad = nodo.derecha.dato;}}
+            
             if (!az.isEmpty() && !ad.isEmpty()) {
                 alfa = new String[2];
                 alfa[0] = az;
                 alfa[1] = ad;
-            } else if (!az.isEmpty()) {
-                alfa = new String[1];
-                alfa[0] = az;
-            } else if (!ad.isEmpty()) {
-                alfa = new String[1];
-                alfa[0] = ad;
-            }
-            Hoja_AFN nueva = new Hoja_AFN(nodo.dato, alfa, izquierda, derecha, nodo.tipo);
+            }else if(!az.isEmpty()){alfa = new String[1]; alfa[0] = az;}
+            else if(!ad.isEmpty()){alfa = new String[1]; alfa[0] = ad;}
+            HOJA_AFN nueva = new HOJA_AFN(nodo.dato, alfa, izquierda, derecha, nodo.tipo);
             return nueva;
         }
-        return new Hoja_AFN(nodo.dato, null, null, null, nodo.tipo);
+        return new HOJA_AFN(nodo.dato, null, null, null, nodo.tipo);
     }
 }
