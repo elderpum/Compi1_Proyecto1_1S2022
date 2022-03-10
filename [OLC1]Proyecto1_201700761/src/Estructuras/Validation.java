@@ -10,47 +10,45 @@ package Estructuras;
  * @author Elder
  */
 public class Validation {
-    private String valor = "";
-    private String expresionRegular = "";
-    private String resultado = "";
-
-    public Validation() {
-    }
+    private String Valor="";
+    private String ExpresionRegular="";
+    private String Resultado="";
     
-    public Validation(String val, String expresion, String result){
-        this.valor = val;
-        this.expresionRegular = expresion;
-        this.resultado = result;
+    public Validation(){
+    
+    }
+    public Validation(String valor, String expre, String result) {
+        this.Valor = valor;
+        this.ExpresionRegular = expre;
+        this.Resultado = result;
     }
 
     public String getValor() {
-        return valor;
+        return Valor;
     }
 
-    public void setValor(String valor) {
-        this.valor = valor;
+    public void setValor(String Valor) {
+        this.Valor = Valor;
     }
 
     public String getExpresionRegular() {
-        return expresionRegular;
+        return ExpresionRegular;
     }
 
-    public void setExpresionRegular(String expresionRegular) {
-        this.expresionRegular = expresionRegular;
+    public void setExpresionRegular(String ExpresionRegular) {
+        this.ExpresionRegular = ExpresionRegular;
     }
 
     public String getResultado() {
-        return resultado;
+        return Resultado;
     }
 
-    public void setResultado(String resultado) {
-        this.resultado = resultado;
+    public void setResultado(String Resultado) {
+        this.Resultado = Resultado;
     }
 
     @Override
     public String toString() {
-        return "Validation{" + "Valor=" + valor + ", ExpresionRegular=" + expresionRegular + ", Resultado=" + "}"; //To change body of generated methods, choose Tools | Templates.
+        return "Validation{" + "Valor=" + Valor + ", ExpresionRegular=" + ExpresionRegular + ", Resultado=" + Resultado + '}';
     }
-    
-    
 }

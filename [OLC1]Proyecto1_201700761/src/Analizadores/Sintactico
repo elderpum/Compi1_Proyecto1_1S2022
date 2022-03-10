@@ -70,7 +70,6 @@ non terminal String ALFABETO;
 non terminal String NOMBRE;
 non terminal String NOMBRE2;
 non terminal HOJA EXPRESION;
-non terminal HOJA EXPRESIONM;
 non terminal String ENTRADA;
 non terminal String CARACTER;
 non terminal String CARACTERNOTA;
@@ -107,7 +106,7 @@ Operacion ::=
 ;
 EXPRESION::=
     POR ALFABETO:a                              {:RESULT = new HOJA("*",new HOJA(a, null, null, "hoja"),null,"*");System.out.println("simbolo * izquierda:"+a);:}
- |  POR EXPRESIONM:a                            {:RESULT = new HOJA("*", a ,null,"*");System.out.println("simbolo * izquierda:"+a);:}
+ |  POR EXPRESION:a                            {:RESULT = new HOJA("*", a ,null,"*");System.out.println("simbolo * izquierda:"+a);:}
  |  PT ALFABETO:a EXPRESION:b                   {:RESULT = new HOJA(".",new HOJA(a, null, null, "hoja"),b,".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
  |  PT EXPRESION:a ALFABETO:b                   {:RESULT = new HOJA(".",a,new HOJA(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
  |  PT ALFABETO:a ALFABETO:b                    {:RESULT = new HOJA(".",new HOJA(a, null, null, "hoja"),new HOJA(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
@@ -117,20 +116,9 @@ EXPRESION::=
  |  DISYUN EXPRESION:a ALFABETO:b               {:RESULT = new HOJA("|",a , new HOJA(b, null, null, "hoja"),"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
  |  DISYUN EXPRESION:a EXPRESION:b              {:RESULT = new HOJA("|",a , b,"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
  |  MAS ALFABETO:a                              {:RESULT = new HOJA("+",new HOJA(a, null, null, "hoja"),null,"+");System.out.println("simbolo + izquierda:"+a);:}
- |  MAS EXPRESIONM:a                            {:RESULT = new HOJA("+",a,null,"+");System.out.println("simbolo + izquierda:"+a);:}
+ |  MAS EXPRESION:a                            {:RESULT = new HOJA("+",a,null,"+");System.out.println("simbolo + izquierda:"+a);:}
  |  INTERR ALFABETO:a                           {:RESULT = new HOJA("?",new HOJA(a, null, null, "hoja"),null,"?");System.out.println("simbolo ? izquierda:"+a);:}
- |  INTERR EXPRESIONM:a                         {:RESULT = new HOJA("?",a,null,"?");System.out.println("simbolo ? izquierda:"+a);:}
-;
-
-EXPRESIONM::=
-    PT ALFABETO:a EXPRESION:b                   {:RESULT = new HOJA(".",new HOJA(a, null, null, "hoja"), b,".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
- |  PT EXPRESION:a ALFABETO:b                   {:RESULT = new HOJA(".", a, new HOJA(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
- |  PT ALFABETO:a ALFABETO:b                    {:RESULT = new HOJA(".",new HOJA(a, null, null, "hoja"), new HOJA(b, null, null, "hoja"),".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
- |  PT EXPRESION:a EXPRESION:b                  {:RESULT = new HOJA(".", a, b,".");System.out.println("simbolo: PT izquierda:"+a+" derecha: "+b);:}
- |  DISYUN ALFABETO:a ALFABETO:b                {:RESULT = new HOJA("|",new HOJA(a, null, null, "hoja"), new HOJA(b, null, null, "hoja"),"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
- |  DISYUN ALFABETO:a EXPRESION:b               {:RESULT = new HOJA("|",new HOJA(a, null, null, "hoja"), b,"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
- |  DISYUN EXPRESION:a ALFABETO:b               {:RESULT = new HOJA("|", a, new HOJA(b, null, null, "hoja"),"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
- |  DISYUN EXPRESION:a EXPRESION:b              {:RESULT = new HOJA("|", a, b,"|");System.out.println("simbolo: DISYUN izquierda:"+a+" derecha: "+b);:}
+ |  INTERR EXPRESION:a                         {:RESULT = new HOJA("?",a,null,"?");System.out.println("simbolo ? izquierda:"+a);:}
 ;
 
 ENTRADA::=

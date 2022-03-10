@@ -29,10 +29,11 @@ public class OLC1Proyecto1_201700761 {
     }
     
     //Vamos a hacer unas pruebas 
-    public static void interpretar(String path){
+    private static void interpretar(String path){
         analizadores.Sintactico parser;
         try{
-            parser = new analizadores.Sintactico(new analizadores.Lexico(new BufferedReader(new FileReader(path))));
+            Lexico lexical = new analizadores.Lexico(new FileInputStream(path));
+            parser = new analizadores.Sintactico(lexical);
             parser.parse();
             Map<String, AFD> arbol = parser.LIST_AFD;
             System.out.println(arbol);

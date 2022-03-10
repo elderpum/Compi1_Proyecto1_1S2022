@@ -14,15 +14,13 @@ public class Errores {
     public String tipo;
     public String descripcion;
     public int linea;
-    public int columna;
-
-    public Errores(int num, String tipo, String descripcion, int linea, int columna) {
+    public int colummna;
+    
+    public Errores(int num, String tipo, String desc, int linea, int col){
         this.numero = num;
         this.tipo = tipo;
-        this.descripcion = descripcion;
+        this.descripcion = desc;
         this.linea = linea;
-        this.columna = columna;
+        this.colummna = col;
     }
-    
-    
 }
