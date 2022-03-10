@@ -11,7 +11,7 @@ Correo: ElderPum@gmail.com
 ## Descripción 📰 
 El curso de Organización de Lenguajes y Compiladores 1, perteneciente a la Facultad de Ingeniería de la Universidad de San Carlos de Guatemala, requiere que usted, como conocedor en la construcción de analizadores Léxico y Sintáctico, cree un sistema que sea capaz de realizar el Método del Árbol y el Método de Thompson, para que los estudiantes puedan verificar que las respuestas de las tareas y exámenes del curso son correctas.
 
-![syntax-analyzer](ttps://i.ibb.co/B3gY8nQ/syntax-analyzer.jpg)
+![syntax-analyzer](https://i.ibb.co/B3gY8nQ/syntax-analyzer.jpg)
 
 ## Herramientas Principales a Utilizar
 - IDE Netbeans 8.2 (Este por temas de compatibilidad)
