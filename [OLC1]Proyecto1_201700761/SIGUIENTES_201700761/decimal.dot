@@ -1,0 +1,32 @@
+digraph grafica{
+rankdir=LR;
+forcelabels= true;
+node [shape = plain];
+nodo18 [label = <<table border = '1' cellboder = '1' cellspacing='0' cellpadding='10'>
+<tr>
+<td COLSPAN='2'>HOJA</td>
+<td>Siguientes</td>
+</tr>
+<tr>
+<td>digito</td>
+<td>1</td>
+<td>1,2</td>
+</tr>
+<tr>
+<td>.</td>
+<td>2</td>
+<td>3</td>
+</tr>
+<tr>
+<td>digito</td>
+<td>3</td>
+<td>3,4</td>
+</tr>
+<tr>
+<td>#</td>
+<td>4</td>
+<td></td>
+</tr>
+</table>>];
+
+}
