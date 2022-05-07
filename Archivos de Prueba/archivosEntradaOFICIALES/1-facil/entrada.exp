@@ -1,0 +1,36 @@
+{
+	<!   Este es un 
+	comentario de 
+	muchas lineas
+	!>
+
+	//este comentario es de una linea
+
+	CONJ:digito -> 0~9 ;
+	CONJ:grupo_1 -> 7~8;
+	
+	decimal->  . + {digito} . "." + {digito};
+	decimal2-> . {digito} . "." + {digito};
+    expre2-> .    "a" . "a" + {grupo_1}  ;
+	
+	%%
+	%%
+    //ahora toca evaluar las cadenas
+
+	decimal:"1545.15";  
+    expre2:"aa788787";  
+	decimal:"4.15";  
+    expre2:"78aa"; 
+    decimal:".15";  
+	decimal2:"1545.15";  
+    decimal:"12"; 
+    expre2:"aa"; 
+	expre2:"aa7"; 
+    decimal:"105."; 
+    expre2:"aazbbb"; 
+	decimal2:"5.15";  
+    decimal2:".10590";  
+	
+
+	
+}

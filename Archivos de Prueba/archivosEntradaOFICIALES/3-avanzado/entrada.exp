@@ -1,0 +1,40 @@
+
+
+{
+
+    //archivo avanzado
+
+    CONJ:grupo_1 -> 7~8;
+    
+    CONJ:especiales1-> o,l,c, "\"";
+    CONJ:especiales2-> "\'", 1, 2;
+    CONJ:especiales3-> "\n", "\"","\'";
+    CONJ:especiales4-> a,b,c;
+    CONJ:especiales5-> b,2,c,3;
+
+    CONJ:conj1-> 0~3;
+    CONJ:conj2-> 4~5;
+    CONJ:conj3-> 6~7;
+    CONJ:conj4-> 8~9;
+
+    CONJ:conj5-> < ~ >;
+    CONJ:conj6-> # ~ &;
+    CONJ:conj7-> ] ~ _;
+    CONJ:conj8-> { ~ } ;
+
+    //definicion de expresiones regulares
+
+    Expresion_emelyGarcia-> . | ."hi" . "\"" {conj5}  * *  | . {grupo_1} {conj6} + + . "dddd" * * | . "hola" "compi" "conjunto"  | ."hi" . "\"" {conj6}  * *  | . {conj8} {conj7} + + . "dddd" * * | . "hola" "compi" {grupo_1}; 
+    Expresion -> * . "espacio" | {conj6} * ? . "\n" |."A"."B"."C"."D"."E"."F"."G"."H""I"  +?."a"."b"."c"."d"."e"."f"."g"."h""i";
+    Expre2 ->     | . . | | + {especiales3} {conj5} | * "c" {conj6}  * | "x" "y"  ? "e"  | | . "f" ? {especiales4}  . "n" . "i" . "j" ? {conj7}   | | "l" . {especiales5} * "n" . ? {conj8} + "q";
+   
+    %%	
+
+    Expresion_emelyGarcia: "hi\"<hi\"#";
+    Expresion_emelyGarcia: "hi\"<hi\"&";
+    Expresion: "espacio#";
+    Expresion: "espacio#espacio#";
+    Expre2: "{qqqqq";
+    Expre2: "nij";
+    
+}

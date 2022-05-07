@@ -1,0 +1,63 @@
+{
+	<!   Este es un 
+	comentario de  "esta cadena no tieen quedar error porque esta dentro de un comentario"
+	muchas lineas
+	!>
+
+    ð //este es un error lexico ß, tienes que reportarlo!
+    çß //este es otro error lexico
+
+
+    <! Tiene que recuperarse de esos errores lexicos y ponerlos en una tabla o algun lugar para el reporte!>
+
+	//este comentario es de una linea
+
+    //definicion de conjuntos->
+	
+    CONJ:grupo_1 -> 7~8;
+    
+    CONJ:especiales1-> o,l,c, "\"";
+    CONJ:especiales2-> "\'", 1, 2;
+    CONJ:especiales3-> "\n", "\"","\'";
+    CONJ:especiales4-> a,b,c;
+    CONJ:especiales5-> b,2,c,3;
+
+    CONJ:conj1-> 0~3;
+    CONJ:conj2-> 4~5;
+    CONJ:conj3-> 6~7;
+    CONJ:conj4-> 8~9;
+
+    CONJ:conj5-> < ~ >;
+    CONJ:conj6-> # ~ &;
+    CONJ:conj7-> ] ~ _;
+    CONJ:conj8-> { ~ } ;
+
+    //definicion de expresiones regulares
+
+    Expre1->  . . . * "\'" {conj1} . * "c" {conj2} . . * "e" "\"" . {conj4} + "h" ;    
+    Expre3-> . | . {conj1} + {conj2}  + "\""  . . | . {conj1} + {conj2}  + "\"" | . "a" ? "\n" + . {conj3} * {conj4} "finish" ;
+    Expre4-> . . . + {especiales2} | . . * . "r" . "p" "q" . {especiales1} "x" ? "r" {grupo_1} . * "\n" * . "b" "c" "fin";
+   
+   
+    %%	
+
+
+    Expre4: "\'12121212\'12127fin"; 
+    Expre1: "\'0c4e\"8hhhhhhhhhhhhhh";
+    Expre4: "mwew12121212\'";  
+    Expre1: "\'0035eeeeeeeeee\"9h";
+    Expre1: "\'1cccccccccc4\"8hhhh";
+    Expre1: "\'35eeeeeeeeee\"9h";
+    Expre3: "044444\"\"\"\"afinish"; 
+    Expre4: "\'12121212\'12127fi"; 
+    Expre1: "1cccccccccc4\"8hhhh";
+    Expre4: "\'2121\'\'\'rpqoxr\n\n\n\nbcbcbcbcfin"; 
+    Expre3: "044444\"\"\"\"afinis"; 
+    Expre1: "\'35eeeeeeeeee\"9"; 
+    Expre3: "55155a\nfinish";   
+    Expre3: "155155a\nfinish";
+
+
+
+
+}
